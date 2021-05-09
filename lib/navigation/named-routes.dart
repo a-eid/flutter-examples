@@ -1,18 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class NavigateAndBack extends StatelessWidget {
+class NamedRoutes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoApp(
+      home: Home(),
       theme: CupertinoThemeData(
         brightness: Brightness.light,
       ),
-      initialRoute: '/home',
-      routes: {
-        '/home': (_) => Home(),
-        '/details': (_) => Details(),
-      },
     );
   }
 }
@@ -26,12 +22,20 @@ class Home extends StatelessWidget {
       ),
       child: Container(
         constraints: BoxConstraints.expand(),
-        color: CupertinoColors.systemRed,
+        color: CupertinoColors.systemBlue,
         child: CupertinoButton(
           onPressed: () {
-            Navigator.pushNamed(context, '/details');
+            Navigator.push(
+              context,
+              CupertinoPageRoute<void>(
+                builder: (BuildContext context) => Details(),
+              ),
+            );
           },
-          child: Text("To Next Screen"),
+          child: Text(
+            "To Next Screen",
+            style: TextStyle(color: CupertinoColors.white),
+          ),
         ),
       ),
     );
@@ -46,7 +50,7 @@ class Details extends StatelessWidget {
         middle: Text("Home"),
       ),
       child: Container(
-        color: CupertinoColors.systemRed,
+        color: CupertinoColors.systemGrey,
         constraints: BoxConstraints.expand(),
         child: CupertinoButton(
           onPressed: () {
