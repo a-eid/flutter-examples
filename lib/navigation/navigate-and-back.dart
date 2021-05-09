@@ -25,7 +25,8 @@ class Home extends StatelessWidget {
         color: CupertinoColors.systemGreen,
         child: CupertinoButton(
           onPressed: () {
-            Navigator.of(context).push<void>(
+            Navigator.push(
+              context,
               CupertinoPageRoute<void>(
                 builder: (BuildContext context) => Details(),
               ),
@@ -50,7 +51,7 @@ class Details extends StatelessWidget {
         constraints: BoxConstraints.expand(),
         child: CupertinoButton(
           onPressed: () {
-            Navigator.of(context).pop<void>();
+            Navigator.pop(context);
           },
           child: Text("Back"),
         ),
