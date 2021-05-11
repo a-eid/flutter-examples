@@ -1,13 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
-
 import 'main.dart';
-
-final options = BaseOptions(
-  baseUrl: 'http://localhost:3000',
-);
 
 class Todo {
   Todo.fromJson(Map<String, dynamic> json)

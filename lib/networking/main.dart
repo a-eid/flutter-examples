@@ -3,8 +3,11 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_examples/networking/fetching-steam.dart';
 
-import 'fetching.dart';
+final options = BaseOptions(
+  baseUrl: 'http://localhost:3000',
+);
 
 final dio = Dio(options);
 // Must be top-level function
@@ -20,7 +23,7 @@ void main() {
   (dio.transformer as DefaultTransformer).jsonDecodeCallback = parseJson;
   runApp(
     MaterialApp(
-      home: FetchingData(),
+      home: FetchingDataStream(),
     ),
   );
 }
