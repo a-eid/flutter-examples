@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'main.dart';
 
 class Todo {
+  Todo({required this.title, this.compeleted = false, this.description = ''});
+
   Todo.fromJson(Map<String, dynamic> json)
       : title = json['title'],
         description = json['description'] ?? '',

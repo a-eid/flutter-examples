@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_examples/networking/add-todo.dart';
 import 'main.dart';
 
 class Todo {
@@ -31,8 +32,6 @@ class FetchingDataStream extends StatefulWidget {
 }
 
 class _FetchingDataStream extends State<FetchingDataStream> {
-  StreamController<List<Todo>> streamController = StreamController();
-
   List<Todo> todos = [];
 
   @override
@@ -41,47 +40,66 @@ class _FetchingDataStream extends State<FetchingDataStream> {
     loadData();
   }
 
-  void loadData() {
+  Future<void> loadData() async {
     dio.get('/todos').then((value) {
       print('data loaded');
-      List<Todo> todos =
+      List<Todo> elements =
           (value.data as List).map((item) => Todo.fromJson(item)).toList();
 
-      streamController.add(todos);
+      setState(() {
+        todos = elements;
+      });
     });
+  }
+
+  void handleAddPress() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddTodo(),
+      ),
+    );
+
+    // we can probaly return a true / false and loadData conditionally.
+    loadData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Todos")),
-      body: StreamBuilder<List<Todo>>(
-        stream: streamController.stream,
-        builder: (_, snapshot) {
-          if (!snapshot.hasData)
-            return Container(
-              alignment: Alignment.center,
-              child: CircularProgressIndicator(),
-            );
+      appBar: AppBar(
+        title: Text("Todos"),
+        actions: [IconButton(onPressed: handleAddPress, icon: Icon(Icons.add))],
+      ),
+      body: ListView.builder(
+        itemCount: todos.length,
+        itemBuilder: (ctx, index) {
+          return Dismissible(
+            direction: DismissDirection.endToStart,
+            confirmDismiss: (_) async {
+              bool deleted = await dio
+                  .delete('/todos/${todos[index].id}')
+                  .then((value) => true)
+                  .catchError((_) => false);
 
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (ctx, index) {
-              return Dismissible(
-                direction: DismissDirection.endToStart,
-                confirmDismiss: (_) => dio
-                    .delete('/todos/${snapshot.data![index].id}')
-                    .then((value) => true)
-                    .catchError((_) => false),
-                key: Key(snapshot.data![index].id.toString()),
-                child: ListTile(
-                  onTap: () {},
-                  title: Text(snapshot.data![index].title),
-                  subtitle: Text(snapshot.data![index].description),
-                  selected: snapshot.data![index].compeleted,
-                ),
-              );
+              if (deleted) {
+                await loadData();
+                return true;
+              } else {
+                return false;
+              }
             },
+            key: Key(todos[index].id.toString()),
+            child: Container(
+              color: Colors.green,
+              margin: EdgeInsets.symmetric(horizontal: 5, vertical: 15),
+              child: ListTile(
+                onTap: () {},
+                title: Text(todos[index].title),
+                subtitle: Text(todos[index].description),
+                selected: todos[index].compeleted,
+              ),
+            ),
           );
         },
       ),
